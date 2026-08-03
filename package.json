@@ -1,0 +1,66 @@
+{
+  "name": "n-bridge",
+  "version": "0.1.0",
+  "description": "Local multi-account connector bridge — let an AI agent reach N Gmail/Calendar/Drive accounts via MCP.",
+  "type": "module",
+  "bin": {
+    "nbridge": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "assets",
+    "docs",
+    "examples",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "VERSION"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/index.ts",
+    "test": "tsc && node --test dist/test/token-store.test.js dist/test/fanout.test.js",
+    "start": "node dist/index.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "mcp",
+    "google",
+    "gmail",
+    "calendar",
+    "drive",
+    "multi-account",
+    "agent",
+    "bridge",
+    "ai",
+    "claude",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "author": "SuperMarioYL",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SuperMarioYL/n-bridge--ma7c2n4k.git"
+  },
+  "homepage": "https://github.com/SuperMarioYL/n-bridge--ma7c2n4k",
+  "bugs": {
+    "url": "https://github.com/SuperMarioYL/n-bridge--ma7c2n4k/issues"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "google-auth-library": "^9.0.0",
+    "googleapis": "^144.0.0",
+    "hono": "^4.0.0",
+    "keytar": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.0"
+  }
+}
