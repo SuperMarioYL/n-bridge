@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "name": "n-bridge",
+  "github": "https://github.com/SuperMarioYL/n-bridge",
+  "host": "n-bridge.lei6393.com",
+  "lang": { "primary": "zh", "toggle": true },
+  "accent": ["#0071E3", "#30d158", "#0a84ff"],
+  "hero": {
+    "eyebrow": { "zh": "本地 · 多账户 · 一条命令", "en": "Local · Multi-account · One command" },
+    "headline": { "zh": "给 AI agent\n一次挂上 N 个号", "en": "Give your AI agent\nN accounts at once" },
+    "sub": { "zh": "一条本地桥挂载 N 个 Google 账户，刷新令牌锁进系统钥匙串；agent 一次调用读遍所有收件箱。", "en": "A local bridge mounts N Google accounts and locks refresh tokens in the OS keychain; your agent reads every inbox in one call." },
+    "command": "nbridge up",
+    "cta": { "zh": "开始使用", "en": "Get started" },
+    "ctaGithub": { "zh": "GitHub", "en": "GitHub" },
+    "scroll": { "zh": "向下滚动", "en": "Scroll" }
+  },
+  "advantages": [
+    {
+      "title": { "zh": "N 个账户，一座桥", "en": "N accounts, one bridge" },
+      "body": { "zh": "官方连接器一次只认一个号——想读另一个账户就得登出登入，或跨号复制粘贴。N-Bridge 一次挂上 N 个 Google 账户；agent 一次调用就扇出、合并、按账户打标返回。", "en": "Official connectors see one account at a time — reaching another means signing out and back in, or copy-pasting across accounts. N-Bridge mounts N Google accounts once; one agent call fans out, merges, and tags results by account." },
+      "chips": ["› 一次挂 N 个 Google 账户", "› 邮件／日历／网盘一次合并", "› 结果按账户打标"]
+    },
+    {
+      "title": { "zh": "授权一次，令牌锁进钥匙串", "en": "Authorize once, tokens locked in the keychain" },
+      "body": { "zh": "浏览器走完一次同意，刷新令牌就存进系统钥匙串（macOS 钥匙串／Windows 凭据管理器／Linux Secret Service）——永不明文落盘、永不离开本机，下一次不用再授权。", "en": "After one browser consent, the refresh token lands in the OS keychain (macOS Keychain / Windows Credential Manager / Linux Secret Service) — never written to disk in plaintext, never leaving your machine. No re-authorization next time." },
+      "chips": ["› 一次同意，永久免授权", "› 令牌存系统钥匙串", "› 永不明文落盘"]
+    },
+    {
+      "title": { "zh": "一条命令，接上你的 agent", "en": "One command, wired into your agent" },
+      "body": { "zh": "一条 nbridge up 启动桥，交给 agent 连。在你的 agent 配置里加一行，它就能一次读遍所有已挂账户。", "en": "One nbridge up starts the bridge for your agent to connect. Add a single line to your agent config and it reads every mounted account at once." },
+      "chips": ["› 一条命令启动", "› 一行接入 agent", "› 支持 Claude Code / Codex / hermes-agent"]
+    },
+    {
+      "title": { "zh": "全在本机，永久免费", "en": "All on your machine, free forever" },
+      "body": { "zh": "桥跑在你自己的机器上，刷新令牌永不离开本机；MIT 开源、本地永久免费——没有云端要托管，没有账号要注册。", "en": "The bridge runs on your own machine and refresh tokens never leave it; MIT licensed and free forever locally — no cloud to host, no account to sign up for." },
+      "chips": ["› 令牌不离本机", "› MIT 开源", "› 本地永久免费"]
+    }
+  ],
+  "scene": { "kind": "hub-nodes", "nodes": ["Gmail", "Calendar", "Drive", "Claude Code", "Codex", "hermes-agent"] },
+  "cta": {
+    "headline": { "zh": "一条命令，让你的 agent 读遍每个收件箱", "en": "One command, and your agent reads every inbox" },
+    "sub": { "zh": "本地永久免费、MIT 开源。挂上你的 Google 号，刷新令牌锁进系统钥匙串、永不离开本机。", "en": "Free forever locally, MIT licensed. Mount your Google accounts; refresh tokens stay locked in the OS keychain, never leaving your machine." },
+    "button": { "zh": "在 GitHub 上查看", "en": "View on GitHub" }
+  },
+  "footer": { "tag": { "zh": "MIT 开源 · 本地永久免费 · 独立维护", "en": "MIT open source · Free forever locally · Independently maintained" } }
+}
