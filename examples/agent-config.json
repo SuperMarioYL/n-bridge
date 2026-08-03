@@ -1,0 +1,13 @@
+{
+  "//": "Point your agent (Claude Code / Codex / an open agent-framework node) at nbridge as an MCP server.",
+  "mcpServers": {
+    "nbridge": {
+      "command": "nbridge",
+      "args": ["up"],
+      "env": {
+        "NBRIDGE_GOOGLE_CLIENT_ID": "your-client-id.apps.googleusercontent.com",
+        "NBRIDGE_GOOGLE_CLIENT_SECRET": "your-client-secret"
+      }
+    }
+  }
+}
