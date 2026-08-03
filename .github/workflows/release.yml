@@ -1,0 +1,64 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Read version
+        id: ver
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+      - name: Pack tarball into dist/
+        run: |
+          mkdir -p dist
+          npm version ${{ steps.ver.outputs.version }} --no-git-tag-version --allow-same-version
+          npm pack
+          tarball=$(npm pack --pack-destination dist 2>/dev/null | tail -n1)
+          cp "$tarball" dist/
+      - name: Generate checksums
+        run: |
+          cd dist
+          shasum -a 256 *.tgz > checksums.txt
+          cat checksums.txt
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  # Optional: publish to npm. Gated behind NPM_TOKEN — a fresh repo has no
+  # token, so this job is skipped until the maintainer sets the secret. The
+  # GitHub Release still ships the tarball from the job above.
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ vars.NPM_PUBLISH == 'true' }}
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
