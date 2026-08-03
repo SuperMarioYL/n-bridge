@@ -26,3 +26,5 @@ CLAUDE.md
 *.log
 npm-debug.log*
 .DS_Store
+.builder_prompt.md
+.build_metadata.slices.yaml
