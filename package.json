@@ -1,6 +1,6 @@
 {
   "name": "n-bridge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local stdio MCP bridge for querying multiple Google accounts, with account-tagged Gmail, Calendar and Drive results and OS-keychain token storage.",
   "type": "module",
   "bin": {
@@ -21,7 +21,7 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "dev": "tsx src/index.ts",
-    "test": "tsc && node --test dist/test/token-store.test.js dist/test/fanout.test.js",
+    "test": "tsc && node --test dist/test/token-store.test.js dist/test/fanout.test.js dist/test/multi-flow.test.js dist/test/packaging.test.js",
     "start": "node dist/index.js"
   },
   "engines": {
@@ -44,11 +44,11 @@
   "author": "SuperMarioYL",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SuperMarioYL/n-bridge--ma7c2n4k.git"
+    "url": "git+https://github.com/SuperMarioYL/n-bridge.git"
   },
-  "homepage": "https://github.com/SuperMarioYL/n-bridge--ma7c2n4k",
+  "homepage": "https://github.com/SuperMarioYL/n-bridge",
   "bugs": {
-    "url": "https://github.com/SuperMarioYL/n-bridge--ma7c2n4k/issues"
+    "url": "https://github.com/SuperMarioYL/n-bridge/issues"
   },
   "dependencies": {
     "@hono/node-server": "^1.0.0",

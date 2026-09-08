@@ -5,7 +5,7 @@ import { listAccounts } from './cli/list.js';
 import { up } from './cli/up.js';
 
 const HELP = `nbridge — local multi-account connector bridge for AI agents
-https://github.com/SuperMarioYL/n-bridge--ma7c2n4k
+https://github.com/SuperMarioYL/n-bridge
 
 usage:
   nbridge add          mount a Google account (OAuth consent, refresh token

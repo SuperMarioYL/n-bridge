@@ -118,10 +118,10 @@ The implemented tools list Google data using read-only scopes. Gmail returns mes
 ## Limits and next steps
 
 - The offline example verifies account selection only. OAuth consent, token refresh, keychain operation and live Google APIs require separate setup and verification.
-- fanout uses Promise.all, so one account error rejects that query rather than returning a partial-success report.
+- If one account fails, that account returns an error entry with no items while the other accounts still return their results.
 - The current list tools do not paginate through every result or provide write operations.
 
-Implemented: multi-account registration, OS-keychain storage and three MCP list tools. Future work includes partial-failure reporting, pagination and additional providers. Hosted pooling, billing, a web dashboard and notifications are not implemented.
+Implemented: multi-account registration, OS-keychain storage, three MCP list tools and per-account failure isolation. Future work includes pagination and additional providers. Hosted pooling, billing, a web dashboard and notifications are not implemented.
 
 ## License and contributions
 

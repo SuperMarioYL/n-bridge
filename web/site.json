@@ -10,7 +10,8 @@
   },
   "meta": {
     "visual_style": "neon-particle",
-    "demo_source": "docs/demo-results.json"
+    "demo_source": "docs/demo-results.json",
+    "content_version": "v0.2.0"
   },
   "hero": {
     "headline": {
@@ -108,8 +109,8 @@
       "zh": "离线示例仅验证账户选择。OAuth 授权、Token 刷新、钥匙串和在线 Google API 需要单独配置与验证。"
     },
     {
-      "en": "fanout uses Promise.all, so one account error rejects that query rather than returning a partial-success report.",
-      "zh": "fanout 使用 Promise.all，一个账户出错会使查询失败，不会生成部分成功报告。"
+      "en": "If one account fails, that account returns an error entry with no items while the other accounts still return their results.",
+      "zh": "某个账户出错时，该账户返回一条不含数据的错误记录，其余账户仍正常返回结果。"
     },
     {
       "en": "The current list tools do not paginate through every result or provide write operations.",

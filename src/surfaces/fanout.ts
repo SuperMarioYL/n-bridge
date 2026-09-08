@@ -13,6 +13,11 @@ export interface ToolRes {
   account_id: string;
   surface: Surface;
   items: unknown[];
+  /**
+   * Present when this account's upstream call failed (revoked token, network
+   * error, quota). `items` is then empty; other accounts still return results.
+   */
+  error?: string;
 }
 
 /** A surface client does the actual per-account upstream call. */
@@ -40,6 +45,10 @@ export function selectAccounts(
  * Fan a query out across the selected accounts and merge the results.
  * Calls run concurrently; the returned ToolRes[] is account-tagged so callers
  * can attribute each item back to its source account.
+ *
+ * One account's failure must not blank the whole merged call: each failed
+ * account comes back as an account-tagged entry with `error` set and no
+ * items, while healthy accounts still return their results.
  */
 export async function fanout(
   all: Account[],
@@ -49,8 +58,19 @@ export async function fanout(
 ): Promise<ToolRes[]> {
   const targets = selectAccounts(all, surface, query.account_id);
   if (targets.length === 0) return [];
-  const results = await Promise.all(
+  const settled = await Promise.allSettled(
     targets.map((a) => client.list(surface, a, query)),
   );
-  return results;
+  return settled.map((outcome, i) => {
+    if (outcome.status === 'rejected') {
+      const reason = outcome.reason;
+      return {
+        account_id: targets[i].id,
+        surface,
+        items: [] as unknown[],
+        error: reason instanceof Error ? reason.message : String(reason),
+      };
+    }
+    return outcome.value;
+  });
 }

@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 
 /** Surfaces the bridge knows how to fan out across. */
 export type Surface = 'gmail' | 'calendar' | 'drive';

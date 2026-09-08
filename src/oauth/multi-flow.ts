@@ -1,6 +1,6 @@
 import { exec } from 'node:child_process';
 import { Hono } from 'hono';
-import { serve, type ServerType } from '@hono/node-server';
+import { serve } from '@hono/node-server';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import type { AppConfig } from '../config.js';
@@ -83,11 +83,42 @@ async function resolveProfile(
   };
 }
 
-function waitForCode(port: number): Promise<string> {
+/**
+ * What shutdown() needs from the callback server. `ServerType` unions in http2
+ * server shapes that lack the connection-reaping methods, so narrow to the
+ * structural surface we actually call (the runtime object is a plain http.Server).
+ */
+interface CallbackServer {
+  close(): void;
+  closeIdleConnections?(): void;
+  closeAllConnections?(): void;
+}
+
+/**
+ * Await the OAuth `code` on a local callback server.
+ *
+ * Exported for tests — the full consent flow needs live Google credentials.
+ * Whatever the outcome, the callback server is closed before the promise
+ * settles: an unclosed listener keeps the Node event loop (and therefore the
+ * CLI process) alive forever.
+ */
+export function waitForCode(port: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const app = new Hono();
     let settled = false;
-    let server: ServerType;
+    let server: CallbackServer;
+
+    // Stop listening on every settle path so the CLI can exit after consent.
+    // closeAllConnections is delayed a beat so the in-flight consent response
+    // still flushes to the browser; the delayed reaper is unref'd so it can
+    // never hold the process open on its own.
+    const shutdown = (): void => {
+      clearTimeout(timeout);
+      server.close();
+      server.closeIdleConnections?.();
+      const reaper = setTimeout(() => server.closeAllConnections?.(), 250);
+      reaper.unref?.();
+    };
 
     app.get('/cb', async (c) => {
       const err = c.req.query('error');
@@ -95,6 +126,7 @@ function waitForCode(port: number): Promise<string> {
       if (err) {
         if (!settled) {
           settled = true;
+          shutdown();
           reject(new Error(`OAuth provider returned error: ${err}`));
         }
         return c.text(`OAuth error: ${err}`, 400);
@@ -102,6 +134,7 @@ function waitForCode(port: number): Promise<string> {
       if (!code) return c.text('missing code parameter', 400);
       if (!settled) {
         settled = true;
+        shutdown();
         resolve(code);
       }
       return c.html(OK_HTML);
@@ -115,7 +148,7 @@ function waitForCode(port: number): Promise<string> {
     const timeout = setTimeout(() => {
       if (!settled) {
         settled = true;
-        server.close();
+        shutdown();
         reject(new Error('OAuth consent timed out after 300s.'));
       }
     }, 300_000);

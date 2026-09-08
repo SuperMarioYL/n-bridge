@@ -77,3 +77,50 @@ test('fanout results are account-tagged so a caller can attribute each item', as
   assert.ok(senders.includes('alpha@x.com'));
   assert.ok(senders.includes('beta@x.com'));
 });
+
+test('fanout isolates a failed account and still returns healthy accounts', async () => {
+  const all = [acct('bad', 'bad@x.com'), acct('good', 'good@x.com')];
+  const client: SurfaceClient = {
+    async list(surface, account) {
+      if (account.id === 'bad') throw new Error('token revoked');
+      return { account_id: account.id, surface, items: [{ id: 'm1' }] };
+    },
+  };
+  const res = await fanout(all, 'gmail', {}, client);
+  assert.equal(res.length, 2);
+  const failed = res.find((r) => r.account_id === 'bad');
+  assert.ok(failed);
+  assert.equal(failed.error, 'token revoked');
+  assert.deepEqual(failed.items, []);
+  const healthy = res.find((r) => r.account_id === 'good');
+  assert.ok(healthy);
+  assert.equal(healthy.error, undefined);
+  assert.equal(healthy.items.length, 1);
+});
+
+test('fanout scoped to a failing account returns an error entry, not a rejection', async () => {
+  const client: SurfaceClient = {
+    async list() {
+      throw new Error('upstream 500');
+    },
+  };
+  const all = [acct('a1', 'a1@x.com'), acct('a2', 'a2@x.com')];
+  const res = await fanout(all, 'gmail', { account_id: 'a1' }, client);
+  assert.equal(res.length, 1);
+  assert.equal(res[0].account_id, 'a1');
+  assert.equal(res[0].error, 'upstream 500');
+  assert.deepEqual(res[0].items, []);
+});
+
+test('fanout where every account fails returns error entries for all', async () => {
+  const client: SurfaceClient = {
+    async list() {
+      throw new Error('offline');
+    },
+  };
+  const all = [acct('a1', 'a1@x.com'), acct('a2', 'a2@x.com')];
+  const res = await fanout(all, 'drive', {}, client);
+  assert.equal(res.length, 2);
+  assert.ok(res.every((r) => r.error === 'offline'));
+  assert.ok(res.every((r) => r.items.length === 0));
+});
