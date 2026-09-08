@@ -1,0 +1,90 @@
+{
+  "name": "N-Bridge",
+  "tagline": "Query the right Google accounts in one call",
+  "architecture": {
+    "title": "Select accounts before querying Google",
+    "nodes": [
+      {
+        "title": "MCP request",
+        "detail": "tool + optional account_id"
+      },
+      {
+        "title": "Account selection",
+        "detail": "registered service coverage"
+      },
+      {
+        "title": "Google client",
+        "detail": "per-account API calls"
+      },
+      {
+        "title": "Tagged results",
+        "detail": "account_id + surface + items"
+      },
+      {
+        "title": "OS keychain",
+        "detail": "refresh-token storage"
+      }
+    ],
+    "edges": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        2
+      ]
+    ]
+  },
+  "process": {
+    "title": "From input to a useful result",
+    "steps": [
+      {
+        "title": "Read metadata",
+        "detail": "three synthetic accounts"
+      },
+      {
+        "title": "Select a service",
+        "detail": "Gmail / Calendar / Drive"
+      },
+      {
+        "title": "Apply account scope",
+        "detail": "all eligible or one ID"
+      }
+    ],
+    "result": "Four routing queries show service filtering and explicit account selection; no Google data is fetched."
+  },
+  "integrations": {
+    "title": "Supported input and output routes",
+    "items": [
+      {
+        "title": "Gmail",
+        "detail": "message metadata listing"
+      },
+      {
+        "title": "Calendar",
+        "detail": "upcoming primary-calendar events"
+      },
+      {
+        "title": "Drive",
+        "detail": "file metadata listing"
+      },
+      {
+        "title": "MCP stdio",
+        "detail": "three read-only list tools"
+      },
+      {
+        "title": "OS keychain",
+        "detail": "refresh-token backend"
+      }
+    ]
+  }
+}

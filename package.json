@@ -1,7 +1,7 @@
 {
   "name": "n-bridge",
   "version": "0.1.0",
-  "description": "Local multi-account connector bridge — let an AI agent reach N Gmail/Calendar/Drive accounts via MCP.",
+  "description": "Local stdio MCP bridge for querying multiple Google accounts, with account-tagged Gmail, Calendar and Drive results and OS-keychain token storage.",
   "type": "module",
   "bin": {
     "nbridge": "dist/index.js"

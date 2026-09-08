@@ -1,46 +1,215 @@
 {
-  "schema": 1,
-  "name": "n-bridge",
+  "schema": 3,
+  "name": "N-Bridge",
   "github": "https://github.com/SuperMarioYL/n-bridge",
   "host": "n-bridge.lei6393.com",
-  "lang": { "primary": "zh", "toggle": true },
-  "accent": ["#0071E3", "#30d158", "#0a84ff"],
+  "palette": "auto",
+  "lang": {
+    "primary": "en",
+    "toggle": true
+  },
+  "meta": {
+    "visual_style": "neon-particle",
+    "demo_source": "docs/demo-results.json"
+  },
   "hero": {
-    "eyebrow": { "zh": "本地 · 多账户 · 一条命令", "en": "Local · Multi-account · One command" },
-    "headline": { "zh": "给 AI agent\n一次挂上 N 个号", "en": "Give your AI agent\nN accounts at once" },
-    "sub": { "zh": "一条本地桥挂载 N 个 Google 账户，刷新令牌锁进系统钥匙串；agent 一次调用读遍所有收件箱。", "en": "A local bridge mounts N Google accounts and locks refresh tokens in the OS keychain; your agent reads every inbox in one call." },
-    "command": "nbridge up",
-    "cta": { "zh": "开始使用", "en": "Get started" },
-    "ctaGithub": { "zh": "GitHub", "en": "GitHub" },
-    "scroll": { "zh": "向下滚动", "en": "Scroll" }
+    "headline": {
+      "en": "Query the right Google accounts in one call",
+      "zh": "一次调用，查询所需的 Google 账户"
+    },
+    "sub": {
+      "en": "N-Bridge registers multiple Google accounts behind a local MCP server. Select one account or query every account that supports the requested Gmail, Calendar or Drive surface.",
+      "zh": "N-Bridge 将多个 Google 账户注册到本地 MCP 服务。可指定一个账户，也可查询所有支持相应 Gmail、Calendar 或 Drive 服务的账户。"
+    },
+    "href": "#quickstart"
   },
   "advantages": [
     {
-      "title": { "zh": "N 个账户，一座桥", "en": "N accounts, one bridge" },
-      "body": { "zh": "官方连接器一次只认一个号——想读另一个账户就得登出登入，或跨号复制粘贴。N-Bridge 一次挂上 N 个 Google 账户；agent 一次调用就扇出、合并、按账户打标返回。", "en": "Official connectors see one account at a time — reaching another means signing out and back in, or copy-pasting across accounts. N-Bridge mounts N Google accounts once; one agent call fans out, merges, and tags results by account." },
-      "chips": ["› 一次挂 N 个 Google 账户", "› 邮件／日历／网盘一次合并", "› 结果按账户打标"]
+      "title": {
+        "en": "Choose scope explicitly",
+        "zh": "明确查询范围"
+      },
+      "body": {
+        "en": "An account_id selects one account; an omitted ID or * selects all eligible accounts.",
+        "zh": "account_id 指定一个账户；省略或使用 * 时选择全部符合条件的账户。"
+      }
     },
     {
-      "title": { "zh": "授权一次，令牌锁进钥匙串", "en": "Authorize once, tokens locked in the keychain" },
-      "body": { "zh": "浏览器走完一次同意，刷新令牌就存进系统钥匙串（macOS 钥匙串／Windows 凭据管理器／Linux Secret Service）——永不明文落盘、永不离开本机，下一次不用再授权。", "en": "After one browser consent, the refresh token lands in the OS keychain (macOS Keychain / Windows Credential Manager / Linux Secret Service) — never written to disk in plaintext, never leaving your machine. No re-authorization next time." },
-      "chips": ["› 一次同意，永久免授权", "› 令牌存系统钥匙串", "› 永不明文落盘"]
+      "title": {
+        "en": "Preserve attribution",
+        "zh": "保留来源账户"
+      },
+      "body": {
+        "en": "Merged results remain grouped by account and service.",
+        "zh": "汇总结果仍按账户和服务标记。"
+      }
     },
     {
-      "title": { "zh": "一条命令，接上你的 agent", "en": "One command, wired into your agent" },
-      "body": { "zh": "一条 nbridge up 启动桥，交给 agent 连。在你的 agent 配置里加一行，它就能一次读遍所有已挂账户。", "en": "One nbridge up starts the bridge for your agent to connect. Add a single line to your agent config and it reads every mounted account at once." },
-      "chips": ["› 一条命令启动", "› 一行接入 agent", "› 支持 Claude Code / Codex / hermes-agent"]
-    },
-    {
-      "title": { "zh": "全在本机，永久免费", "en": "All on your machine, free forever" },
-      "body": { "zh": "桥跑在你自己的机器上，刷新令牌永不离开本机；MIT 开源、本地永久免费——没有云端要托管，没有账号要注册。", "en": "The bridge runs on your own machine and refresh tokens never leave it; MIT licensed and free forever locally — no cloud to host, no account to sign up for." },
-      "chips": ["› 令牌不离本机", "› MIT 开源", "› 本地永久免费"]
+      "title": {
+        "en": "Separate tokens from metadata",
+        "zh": "分开保存 Token 与元数据"
+      },
+      "body": {
+        "en": "Refresh tokens go through an OS-keychain backend; account metadata is stored separately.",
+        "zh": "刷新 Token 通过系统钥匙串后端保存，账户元数据单独存储。"
+      }
     }
   ],
-  "scene": { "kind": "hub-nodes", "nodes": ["Gmail", "Calendar", "Drive", "Claude Code", "Codex", "hermes-agent"] },
-  "cta": {
-    "headline": { "zh": "一条命令，让你的 agent 读遍每个收件箱", "en": "One command, and your agent reads every inbox" },
-    "sub": { "zh": "本地永久免费、MIT 开源。挂上你的 Google 号，刷新令牌锁进系统钥匙串、永不离开本机。", "en": "Free forever locally, MIT licensed. Mount your Google accounts; refresh tokens stay locked in the OS keychain, never leaving your machine." },
-    "button": { "zh": "在 GitHub 上查看", "en": "View on GitHub" }
+  "demo": {
+    "title": {
+      "en": "Run it on a complete example",
+      "zh": "运行完整示例"
+    },
+    "note": {
+      "en": "The shipped example calls the production selectAccounts function with complete synthetic account metadata. It shows routing decisions only; it does not simulate or claim successful Google queries.",
+      "zh": "随仓示例使用完整合成账户元数据调用实际 selectAccounts 函数，只展示路由决策，不模拟或宣称 Google 查询成功。"
+    },
+    "source": "https://github.com/SuperMarioYL/n-bridge/blob/main/docs/demo-results.json",
+    "steps": [
+      {
+        "label": "Recorded run",
+        "body": "Production account selection on synthetic metadata, without OAuth, keychain or Google API access.",
+        "command": "node examples/presentation-demo.mjs",
+        "output": "{\"surface\":\"gmail\",\"account_id\":\"*\",\"selected\":[\"work\",\"personal\"]}\n{\"surface\":\"gmail\",\"account_id\":\"personal\",\"selected\":[\"personal\"]}\n{\"surface\":\"calendar\",\"account_id\":\"*\",\"selected\":[\"work\",\"calendar-only\"]}\n{\"surface\":\"drive\",\"account_id\":\"work\",\"selected\":[]}\nScope: actual account-routing function on synthetic metadata; no OAuth, keychain or Google API access.",
+        "image": "/assets/presentation/demo-0-light.svg",
+        "imageDark": "/assets/presentation/demo-0-dark.svg"
+      }
+    ]
   },
-  "footer": { "tag": { "zh": "MIT 开源 · 本地永久免费 · 独立维护", "en": "MIT open source · Free forever locally · Independently maintained" } }
+  "quickstart": {
+    "title": {
+      "en": "Try it locally",
+      "zh": "本地上手"
+    },
+    "body": {
+      "en": "The shipped example calls the production selectAccounts function with complete synthetic account metadata. It shows routing decisions only; it does not simulate or claim successful Google queries.",
+      "zh": "随仓示例使用完整合成账户元数据调用实际 selectAccounts 函数，只展示路由决策，不模拟或宣称 Google 查询成功。"
+    },
+    "steps": [
+      {
+        "title": {
+          "en": "Install from source",
+          "zh": "从源码安装"
+        },
+        "code": "git clone https://github.com/SuperMarioYL/n-bridge.git\ncd n-bridge\nnpm ci\nnpm run build"
+      },
+      {
+        "title": {
+          "en": "Run the included example",
+          "zh": "运行随仓示例"
+        },
+        "code": "node examples/presentation-demo.mjs"
+      }
+    ]
+  },
+  "limitations": [
+    {
+      "en": "The offline example verifies account selection only. OAuth consent, token refresh, keychain operation and live Google APIs require separate setup and verification.",
+      "zh": "离线示例仅验证账户选择。OAuth 授权、Token 刷新、钥匙串和在线 Google API 需要单独配置与验证。"
+    },
+    {
+      "en": "fanout uses Promise.all, so one account error rejects that query rather than returning a partial-success report.",
+      "zh": "fanout 使用 Promise.all，一个账户出错会使查询失败，不会生成部分成功报告。"
+    },
+    {
+      "en": "The current list tools do not paginate through every result or provide write operations.",
+      "zh": "当前列表工具不会遍历全部分页，也不提供写操作。"
+    }
+  ],
+  "scene": {
+    "kind": "neon-graph",
+    "fallback": "/assets/presentation/scene-dark.svg",
+    "fallbackLight": "/assets/presentation/scene-light.svg"
+  },
+  "story": {
+    "intro": {
+      "title": {
+        "en": "A concrete task",
+        "zh": "从实际任务出发"
+      },
+      "body": {
+        "en": "When work and personal data live in separate accounts, a useful result needs both routing and attribution. N-Bridge selects eligible accounts before calling their APIs and keeps account_id on every returned group.",
+        "zh": "工作和个人数据位于不同账户时，查询既需要选对账户，也需要保留来源。N-Bridge 在调用 API 前选择符合条件的账户，并在每组返回值上保留 account_id。"
+      }
+    },
+    "sections": [
+      {
+        "title": {
+          "en": "Follow the operation",
+          "zh": "处理过程"
+        },
+        "body": {
+          "en": "OAuth consent populates the account registry and token store. The stdio MCP server exposes gmail.list, calendar.list and drive.list. selectAccounts filters by surface and optional ID; fanout invokes GoogleSurfaceClient concurrently and returns account-tagged results.",
+          "zh": "OAuth 授权填充账户注册表和 Token 存储。stdio MCP 服务暴露 gmail.list、calendar.list、drive.list。selectAccounts 按服务和可选 ID 过滤账户，fanout 并发调用 GoogleSurfaceClient，返回带账户标记的结果。"
+        },
+        "image": {
+          "light": "/assets/presentation/process-light.svg",
+          "dark": "/assets/presentation/process-dark.svg",
+          "alt": {
+            "en": "Follow the operation",
+            "zh": "处理过程"
+          }
+        }
+      },
+      {
+        "title": {
+          "en": "Select accounts before querying Google",
+          "zh": "选择账户，再查询 Google"
+        },
+        "body": {
+          "en": "OAuth consent populates the account registry and token store. The stdio MCP server exposes gmail.list, calendar.list and drive.list. selectAccounts filters by surface and optional ID; fanout invokes GoogleSurfaceClient concurrently and returns account-tagged results.",
+          "zh": "OAuth 授权填充账户注册表和 Token 存储。stdio MCP 服务暴露 gmail.list、calendar.list、drive.list。selectAccounts 按服务和可选 ID 过滤账户，fanout 并发调用 GoogleSurfaceClient，返回带账户标记的结果。"
+        },
+        "image": {
+          "light": "/assets/presentation/architecture-light.svg",
+          "dark": "/assets/presentation/architecture-dark.svg",
+          "alt": {
+            "en": "Select accounts before querying Google",
+            "zh": "选择账户，再查询 Google"
+          }
+        }
+      },
+      {
+        "title": {
+          "en": "Connect the pieces",
+          "zh": "输入与输出"
+        },
+        "body": {
+          "en": "The implemented tools list Google data using read-only scopes. Gmail returns message metadata and snippets, Calendar queries the primary calendar, and Drive lists selected file metadata. This local bridge does not provide Microsoft/Slack adapters or a hosted team account pool.",
+          "zh": "已实现工具使用只读权限列出 Google 数据。Gmail 返回邮件元数据和片段，Calendar 查询主日历，Drive 列出指定文件元数据。本地桥接器没有提供 Microsoft、Slack 适配器或托管团队账户池。"
+        },
+        "image": {
+          "light": "/assets/presentation/integrations-light.svg",
+          "dark": "/assets/presentation/integrations-dark.svg",
+          "alt": {
+            "en": "Connect the pieces",
+            "zh": "输入与输出"
+          }
+        }
+      }
+    ],
+    "details": [
+      {
+        "title": {
+          "en": "Configuration",
+          "zh": "配置"
+        },
+        "body": {
+          "en": "NBRIDGE_GOOGLE_CLIENT_ID and NBRIDGE_GOOGLE_CLIENT_SECRET supply OAuth credentials. NBRIDGE_CALLBACK_PORT defaults to 8421; NBRIDGE_REDIRECT_URI defaults to http://127.0.0.1:<port>/cb and must match your registered redirect. ~/.nbridge/accounts.json contains profiles, supported surfaces and token references; keytar stores refresh tokens under the nbridge service. Tokens are used with Google for authentication, and queried data is returned to the connected MCP client.",
+          "zh": "NBRIDGE_GOOGLE_CLIENT_ID 和 NBRIDGE_GOOGLE_CLIENT_SECRET 提供 OAuth 凭据。NBRIDGE_CALLBACK_PORT 默认 8421；NBRIDGE_REDIRECT_URI 默认 http://127.0.0.1:<port>/cb，必须与注册回调一致。~/.nbridge/accounts.json 保存资料、服务类型和 Token 引用，keytar 在 nbridge 服务下存储刷新 Token。Token 会用于 Google 认证，查询数据返回已连接的 MCP 客户端。"
+        }
+      },
+      {
+        "title": {
+          "en": "Further use",
+          "zh": "进一步使用"
+        },
+        "body": {
+          "en": "After setting your OAuth client variables, add opens browser consent for one account. Repeat it for other accounts. list displays mounted metadata; up serves MCP over stdio. Configure an MCP client to launch node with the absolute path to dist/index.js and argument up. Tools accept account_id, maxResults and q; q is used by Gmail and Drive, not Calendar.",
+          "zh": "设置 OAuth 客户端变量后，add 为一个账户打开浏览器授权，可重复添加其他账户。list 显示已注册元数据，up 通过 stdio 提供 MCP 服务。MCP 客户端应使用 node 启动 dist/index.js 的绝对路径并传入 up。工具接受 account_id、maxResults、q；q 用于 Gmail 和 Drive，不用于 Calendar。"
+        },
+        "code": "node dist/index.js add\nnode dist/index.js list\nnode dist/index.js up"
+      }
+    ]
+  }
 }

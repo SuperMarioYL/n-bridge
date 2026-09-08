@@ -1,0 +1,38 @@
+{
+  "mode": "auto",
+  "id": "c9e656-8be76a-f6eaac-0da583fc9bd4",
+  "identity": "https://github.com/supermarioyl/n-bridge",
+  "primary": "#c9e656",
+  "secondary": "#8be76a",
+  "highlight": "#f6eaac",
+  "dark": {
+    "bg": "#090c0d",
+    "panel": "#121717",
+    "code": "#121713",
+    "ink": "#fdfbee",
+    "muted": "#acb9a8",
+    "line": "#333c1d",
+    "primary": "#c9e656",
+    "secondary": "#8be76a",
+    "highlight": "#f6eaac",
+    "accent": "#c9e656",
+    "buttonStart": "#6e7d2f",
+    "buttonEnd": "#4f833c",
+    "buttonText": "#ffffff"
+  },
+  "light": {
+    "bg": "#fdfef9",
+    "panel": "#fcfef7",
+    "code": "#fbfdf3",
+    "ink": "#232a1c",
+    "muted": "#6a7869",
+    "line": "#eef7cb",
+    "primary": "#6c7b2e",
+    "secondary": "#4e813b",
+    "highlight": "#7c7556",
+    "accent": "#6c7b2e",
+    "buttonStart": "#6e7d2f",
+    "buttonEnd": "#4f833c",
+    "buttonText": "#ffffff"
+  }
+}

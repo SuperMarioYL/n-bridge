@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "source_revision": "11667246521090364dc988fdba0d8ce52967c86d",
+  "scope": "Production account selection on synthetic metadata, without OAuth, keychain or Google API access.",
+  "steps": [
+    {
+      "label": "Recorded run",
+      "body": "Production account selection on synthetic metadata, without OAuth, keychain or Google API access.",
+      "command": "node examples/presentation-demo.mjs",
+      "output": "{\"surface\":\"gmail\",\"account_id\":\"*\",\"selected\":[\"work\",\"personal\"]}\n{\"surface\":\"gmail\",\"account_id\":\"personal\",\"selected\":[\"personal\"]}\n{\"surface\":\"calendar\",\"account_id\":\"*\",\"selected\":[\"work\",\"calendar-only\"]}\n{\"surface\":\"drive\",\"account_id\":\"work\",\"selected\":[]}\nScope: actual account-routing function on synthetic metadata; no OAuth, keychain or Google API access."
+    }
+  ]
+}
