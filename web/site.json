@@ -31,8 +31,8 @@
         "zh": "明确查询范围"
       },
       "body": {
-        "en": "An account_id selects one account; an omitted ID or * selects all eligible accounts.",
-        "zh": "account_id 指定一个账户；省略或使用 * 时选择全部符合条件的账户。"
+        "en": "An account_id selects one account; an omitted ID or * selects all eligible accounts. An ID that matches nothing returns an explicit error entry instead of a silent empty result.",
+        "zh": "account_id 指定一个账户；省略或使用 * 时选择全部符合条件的账户。传入不存在的 ID 会返回明确的错误记录，而不是静默的空结果。"
       }
     },
     {
@@ -218,10 +218,10 @@
           "zh": "进一步使用"
         },
         "body": {
-          "en": "After setting your OAuth client variables, add opens browser consent for one account. Repeat it for other accounts. list displays mounted metadata; up serves MCP over stdio. Configure an MCP client to launch node with the absolute path to dist/index.js and argument up. Tools accept account_id, maxResults and q; q is used by Gmail and Drive, not Calendar.",
-          "zh": "设置 OAuth 客户端变量后，add 为一个账户打开浏览器授权，可重复添加其他账户。list 显示已注册元数据，up 通过 stdio 提供 MCP 服务。MCP 客户端应使用 node 启动 dist/index.js 的绝对路径并传入 up。工具接受 account_id、maxResults、q；q 用于 Gmail 和 Drive，不用于 Calendar。"
+          "en": "After setting your OAuth client variables, add opens browser consent for one account. Repeat it for other accounts. list displays mounted metadata; remove <account_id> unmounts an account (deleting its keychain token and metadata); up serves MCP over stdio. Configure an MCP client to launch node with the absolute path to dist/index.js and argument up. Tools accept account_id, maxResults and q; q is used by Gmail, Drive and Calendar (free-text search).",
+          "zh": "设置 OAuth 客户端变量后，add 为一个账户打开浏览器授权，可重复添加其他账户。list 显示已注册元数据，remove <account_id> 卸载账户（删除钥匙串中的刷新令牌和元数据），up 通过 stdio 提供 MCP 服务。MCP 客户端应使用 node 启动 dist/index.js 的绝对路径并传入 up。工具接受 account_id、maxResults、q；q 用于 Gmail、Drive 和 Calendar（自由文本搜索）。"
         },
-        "code": "node dist/index.js add\nnode dist/index.js list\nnode dist/index.js up"
+        "code": "node dist/index.js add\nnode dist/index.js list\nnode dist/index.js remove <account_id>\nnode dist/index.js up"
       }
     ]
   }
