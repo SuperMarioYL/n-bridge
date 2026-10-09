@@ -1,16 +1,22 @@
 import { loadConfig } from '../config.js';
 import { AccountRegistry } from '../accounts/registry.js';
-import { getSystemKeychain, TokenStore } from '../oauth/token-store.js';
+import {
+  getSystemKeychain,
+  TokenStore,
+  unavailableKeychain,
+} from '../oauth/token-store.js';
 
 /**
  * `nbridge list` — show every mounted account.
  *
  * Reads only the metadata file (email + tokenRef). Tokens stay in the
- * keychain and are never read by this command.
+ * keychain and are never read by this command, so the keychain backend is
+ * best-effort: on hosts where the keytar binding cannot load, listing still
+ * works because nothing on this path ever touches the keychain.
  */
 export async function listAccounts(): Promise<void> {
   const config = loadConfig();
-  const backend = await getSystemKeychain();
+  const backend = await getSystemKeychain().catch(() => unavailableKeychain());
   const tokenStore = new TokenStore(backend, config.keychainService);
   const registry = new AccountRegistry(config.accountsFile, tokenStore);
   await registry.load();

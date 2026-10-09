@@ -64,10 +64,33 @@ test('fanout with a specific account_id returns only that account', async () => 
   assert.equal(res[0].account_id, 'a2');
 });
 
-test('fanout with no matching account returns an empty merged result', async () => {
+test('fanout with an explicit unknown account_id returns an error entry naming the id', async () => {
   const all = [acct('a1', 'a1@x.com')];
   const res = await fanout(all, 'gmail', { account_id: 'missing' }, fakeClient);
-  assert.equal(res.length, 0);
+  assert.equal(res.length, 1);
+  assert.equal(res[0].account_id, 'missing');
+  assert.deepEqual(res[0].items, []);
+  assert.match(res[0].error ?? '', /no mounted account "missing"/);
+  // the error names what IS mounted so the caller can recover
+  assert.match(res[0].error ?? '', /a1/);
+});
+
+test('fanout with an explicit account lacking the surface returns an error entry', async () => {
+  const all = [acct('cal-only', 'c@x.com', ['calendar'])];
+  const res = await fanout(all, 'gmail', { account_id: 'cal-only' }, fakeClient);
+  assert.equal(res.length, 1);
+  assert.equal(res[0].account_id, 'cal-only');
+  assert.match(res[0].error ?? '', /surface gmail/);
+});
+
+test('fanout with account_id "*" and no mounted accounts returns an empty merged result', async () => {
+  const res = await fanout([], 'gmail', { account_id: '*' }, fakeClient);
+  assert.deepEqual(res, []);
+});
+
+test('fanout with no account_id and no mounted accounts returns an empty merged result', async () => {
+  const res = await fanout([], 'gmail', {}, fakeClient);
+  assert.deepEqual(res, []);
 });
 
 test('fanout results are account-tagged so a caller can attribute each item', async () => {

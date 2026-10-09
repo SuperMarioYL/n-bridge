@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
-import { TokenStore } from '../oauth/token-store.js';
+import { TokenStore, unavailableKeychain } from '../oauth/token-store.js';
 import type { KeychainBackend } from '../oauth/token-store.js';
 import { AccountRegistry } from '../accounts/registry.js';
 import type { Account } from '../accounts/registry.js';
@@ -77,6 +77,32 @@ test('registry add -> getToken round-trips through the keychain', async () => {
   // round-trip via the registry pulls the token from the keychain.
   assert.equal(await registry.getToken(acct), 'refresh-token-123');
   assert.equal(fake.size(), 1);
+  await rm(dir, { recursive: true, force: true });
+});
+
+test('unavailableKeychain rejects every operation with a clear error', async () => {
+  const backend = unavailableKeychain();
+  await assert.rejects(
+    () => backend.setPassword('nbridge', 'acct-1', 'tok'),
+    /keychain unavailable/,
+  );
+  await assert.rejects(
+    () => backend.getPassword('nbridge', 'acct-1'),
+    /keychain unavailable/,
+  );
+  await assert.rejects(
+    () => backend.deletePassword('nbridge', 'acct-1'),
+    /keychain unavailable/,
+  );
+});
+
+test('registry load + list works on an unavailable keychain (metadata-only flow)', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'nbridge-test-'));
+  const accountsFile = join(dir, 'accounts.json');
+  const store = new TokenStore(unavailableKeychain(), 'nbridge');
+  const registry = new AccountRegistry(accountsFile, store);
+  await registry.load();
+  assert.deepEqual(registry.list(), []);
   await rm(dir, { recursive: true, force: true });
 });
 

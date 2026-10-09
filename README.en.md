@@ -84,11 +84,12 @@ The existing recording is retained for context; the text example above documents
 
 ## Usage
 
-After setting your OAuth client variables, add opens browser consent for one account. Repeat it for other accounts. list displays mounted metadata; up serves MCP over stdio. Configure an MCP client to launch node with the absolute path to dist/index.js and argument up. Tools accept account_id, maxResults and q; q is used by Gmail and Drive, not Calendar.
+After setting your OAuth client variables, add opens browser consent for one account. Repeat it for other accounts. list displays mounted metadata, remove <account_id> unmounts an account (deleting its keychain refresh token and metadata); up serves MCP over stdio. Configure an MCP client to launch node with the absolute path to dist/index.js and argument up. Tools accept account_id, maxResults and q; q is used by Gmail, Drive and Calendar (free-text search). An unknown account_id returns an error entry instead of a silent empty result.
 
 ```bash
 node dist/index.js add
 node dist/index.js list
+node dist/index.js remove <account_id>
 node dist/index.js up
 ```
 

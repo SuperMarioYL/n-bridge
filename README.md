@@ -84,11 +84,12 @@ Scope: actual account-routing function on synthetic metadata; no OAuth, keychain
 
 ## 用法
 
-设置 OAuth 客户端变量后，add 为一个账户打开浏览器授权，可重复添加其他账户。list 显示已注册元数据，up 通过 stdio 提供 MCP 服务。MCP 客户端应使用 node 启动 dist/index.js 的绝对路径并传入 up。工具接受 account_id、maxResults、q；q 用于 Gmail 和 Drive，不用于 Calendar。
+设置 OAuth 客户端变量后，add 为一个账户打开浏览器授权，可重复添加其他账户。list 显示已注册元数据，remove <account_id> 卸载账户（删除钥匙串中的刷新令牌和元数据），up 通过 stdio 提供 MCP 服务。MCP 客户端应使用 node 启动 dist/index.js 的绝对路径并传入 up。工具接受 account_id、maxResults、q；q 用于 Gmail、Drive 和 Calendar（自由文本搜索）。传入不存在的 account_id 会返回一条错误记录而不是静默的空结果。
 
 ```bash
 node dist/index.js add
 node dist/index.js list
+node dist/index.js remove <account_id>
 node dist/index.js up
 ```
 

@@ -2,6 +2,7 @@
 import { VERSION } from './config.js';
 import { addAccount } from './cli/add-account.js';
 import { listAccounts } from './cli/list.js';
+import { removeAccount } from './cli/remove-account.js';
 import { up } from './cli/up.js';
 
 const HELP = `nbridge — local multi-account connector bridge for AI agents
@@ -11,6 +12,7 @@ usage:
   nbridge add          mount a Google account (OAuth consent, refresh token
                        stored in the OS keychain — never on disk)
   nbridge list         list mounted accounts
+  nbridge remove <id>  unmount an account (deletes its keychain token)
   nbridge up           boot the bridge + MCP server on stdio
   nbridge --version    print version
   nbridge --help       show this help
@@ -27,6 +29,9 @@ async function main(): Promise<void> {
       break;
     case 'list':
       await listAccounts();
+      break;
+    case 'remove':
+      await removeAccount(process.argv[3]);
       break;
     case 'up':
       await up();

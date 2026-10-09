@@ -57,3 +57,24 @@ export class TokenStore {
     return this.backend.deletePassword(this.service, tokenRef);
   }
 }
+
+/**
+ * A backend for metadata-only contexts (`nbridge list`): every operation
+ * rejects with a clear error. Listing never calls these, so a registry built
+ * on it works wherever the metadata file is readable — even on hosts where
+ * the keytar native binding cannot load.
+ */
+export function unavailableKeychain(): KeychainBackend {
+  const unavailable = 'keychain unavailable in this context';
+  return {
+    async setPassword(): Promise<void> {
+      throw new Error(unavailable);
+    },
+    async getPassword(): Promise<string | null> {
+      throw new Error(unavailable);
+    },
+    async deletePassword(): Promise<boolean> {
+      throw new Error(unavailable);
+    },
+  };
+}

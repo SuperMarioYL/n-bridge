@@ -57,7 +57,24 @@ export async function fanout(
   client: SurfaceClient,
 ): Promise<ToolRes[]> {
   const targets = selectAccounts(all, surface, query.account_id);
-  if (targets.length === 0) return [];
+  if (targets.length === 0) {
+    // An explicit account_id that matches nothing is a caller mistake (typo,
+    // or an account without this surface) — report it instead of returning a
+    // silent empty result that looks like "no matches". A fanout over zero
+    // mounted accounts is a legitimate empty result, not an error.
+    if (query.account_id && query.account_id !== '*') {
+      const mounted = all.map((a) => a.id).join(', ') || 'none';
+      return [
+        {
+          account_id: query.account_id,
+          surface,
+          items: [],
+          error: `no mounted account "${query.account_id}" with surface ${surface} (mounted: ${mounted})`,
+        },
+      ];
+    }
+    return [];
+  }
   const settled = await Promise.allSettled(
     targets.map((a) => client.list(surface, a, query)),
   );

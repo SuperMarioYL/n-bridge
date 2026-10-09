@@ -30,3 +30,16 @@ By default every tool fans out across all mounted accounts. Pass a specific
 ```json
 { "account_id": "acct-1", "maxResults": 5 }
 ```
+
+## Unmount an account
+
+`nbridge remove <account_id>` unmounts an account: it deletes the refresh
+token from the OS keychain and drops the account from the metadata registry.
+Ids come from `nbridge list`:
+
+```bash
+nbridge list
+nbridge remove acct-1
+```
+
+A missing or unknown id exits 1 without touching the keychain.

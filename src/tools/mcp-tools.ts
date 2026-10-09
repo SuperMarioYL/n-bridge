@@ -28,7 +28,8 @@ function baseInputSchema(surface: Surface): Record<string, unknown> {
       },
       q: {
         type: 'string',
-        description: 'Optional upstream query/filter (e.g. Gmail search query, Drive query string).',
+        description:
+          'Optional upstream query/filter (Gmail search query, Calendar free-text search, Drive query string).',
       },
     },
     additionalProperties: false,
@@ -94,7 +95,7 @@ export class GoogleSurfaceClient implements SurfaceClient {
   async list(surface: Surface, account: Account, query: ListQuery): Promise<ToolRes> {
     const max = query.maxResults ?? 10;
     if (surface === 'gmail') return this.listGmail(account, max, query.q);
-    if (surface === 'calendar') return this.listCalendar(account, max);
+    if (surface === 'calendar') return this.listCalendar(account, max, query.q);
     return this.listDrive(account, max, query.q);
   }
 
@@ -105,53 +106,18 @@ export class GoogleSurfaceClient implements SurfaceClient {
   ): Promise<ToolRes> {
     const o = await this.oauthFor(account);
     const gmail = google.gmail({ version: 'v1', auth: o });
-    const list = await gmail.users.messages.list({
-      userId: 'me',
-      maxResults: max,
-      q,
-    });
-    const ids = list.data.messages ?? [];
-    const items = await Promise.all(
-      ids.slice(0, max).map(async (m) => {
-        const msg = await gmail.users.messages.get({
-          userId: 'me',
-          id: m.id!,
-          format: 'metadata',
-          metadataHeaders: ['Subject', 'From', 'Date'],
-        });
-        const headers = Object.fromEntries(
-          (msg.data.payload?.headers ?? []).map((h) => [h.name, h.value]),
-        );
-        return {
-          id: m.id,
-          threadId: m.threadId,
-          snippet: msg.data.snippet,
-          subject: headers.Subject,
-          from: headers.From,
-          date: headers.Date,
-        };
-      }),
-    );
+    const items = await fetchGmailItems(gmail.users.messages, max, q);
     return { account_id: account.id, surface: 'gmail', items };
   }
 
-  private async listCalendar(account: Account, max: number): Promise<ToolRes> {
+  private async listCalendar(
+    account: Account,
+    max: number,
+    q?: string,
+  ): Promise<ToolRes> {
     const o = await this.oauthFor(account);
     const calendar = google.calendar({ version: 'v3', auth: o });
-    const now = new Date().toISOString();
-    const res = await calendar.events.list({
-      calendarId: 'primary',
-      timeMin: now,
-      maxResults: max,
-      singleEvents: true,
-      orderBy: 'startTime',
-    });
-    const items = (res.data.items ?? []).map((e) => ({
-      id: e.id,
-      summary: e.summary,
-      start: e.start?.dateTime ?? e.start?.date,
-      end: e.end?.dateTime ?? e.end?.date,
-    }));
+    const items = await fetchCalendarItems(calendar.events, max, q);
     return { account_id: account.id, surface: 'calendar', items };
   }
 
@@ -175,4 +141,125 @@ export class GoogleSurfaceClient implements SurfaceClient {
     }));
     return { account_id: account.id, surface: 'drive', items };
   }
+}
+
+/**
+ * Structural surface of the Gmail messages resource the fetch helpers use.
+ * The real googleapis handle satisfies this shape; tests pass structural fakes.
+ */
+export interface GmailMessagesHandle {
+  list(params: {
+    userId: string;
+    maxResults: number;
+    q?: string;
+  }): Promise<{ data: { messages?: { id?: string | null; threadId?: string | null }[] | null } }>;
+  get(params: {
+    userId: string;
+    id: string;
+    format: string;
+    metadataHeaders?: string[];
+  }): Promise<{
+    data: {
+      snippet?: string | null;
+      payload?: { headers?: { name?: string | null; value?: string | null }[] | null } | null;
+    };
+  }>;
+}
+
+/**
+ * List + hydrate Gmail message metadata. One deleted/unfetchable message must
+ * not fail the whole account call, so each get is isolated: a failed message
+ * yields an inline `{ id, error }` entry while healthy messages still return.
+ */
+export async function fetchGmailItems(
+  messages: GmailMessagesHandle,
+  max: number,
+  q?: string,
+): Promise<unknown[]> {
+  const list = await messages.list({ userId: 'me', maxResults: max, q });
+  const ids = list.data.messages ?? [];
+  const settled = await Promise.allSettled(
+    ids.slice(0, max).map(async (m) => {
+      const msg = await messages.get({
+        userId: 'me',
+        id: m.id!,
+        format: 'metadata',
+        metadataHeaders: ['Subject', 'From', 'Date'],
+      });
+      const headers = Object.fromEntries(
+        (msg.data.payload?.headers ?? []).map((h) => [h.name, h.value]),
+      );
+      return {
+        id: m.id,
+        threadId: m.threadId,
+        snippet: msg.data.snippet,
+        subject: headers.Subject,
+        from: headers.From,
+        date: headers.Date,
+      };
+    }),
+  );
+  return settled.map((outcome, i) => {
+    if (outcome.status === 'fulfilled') return outcome.value;
+    const reason = outcome.reason;
+    return {
+      id: ids[i]?.id,
+      error: reason instanceof Error ? reason.message : String(reason),
+    };
+  });
+}
+
+/** Structural surface of the Calendar events resource the fetch helper uses. */
+export interface CalendarEventsHandle {
+  list(params: {
+    calendarId: string;
+    timeMin: string;
+    maxResults: number;
+    singleEvents: boolean;
+    orderBy: string;
+    q?: string;
+  }): Promise<{
+    data: {
+      items?:
+        | ({
+            id?: string | null;
+            summary?: string | null;
+            start?: { dateTime?: string | null; date?: string | null } | null;
+            end?: { dateTime?: string | null; date?: string | null } | null;
+          } | null)[]
+        | null;
+    };
+  }>;
+}
+
+/**
+ * List upcoming primary-calendar events. `q` is forwarded to events.list
+ * (Calendar API v3 free-text search) — the tool schema advertises it, so it
+ * must never be silently dropped.
+ */
+export async function fetchCalendarItems(
+  events: CalendarEventsHandle,
+  max: number,
+  q?: string,
+): Promise<unknown[]> {
+  const res = await events.list({
+    calendarId: 'primary',
+    timeMin: new Date().toISOString(),
+    maxResults: max,
+    singleEvents: true,
+    orderBy: 'startTime',
+    ...(q !== undefined ? { q } : {}),
+  });
+  return (res.data.items ?? []).flatMap((e) =>
+    e
+      ? [
+          {
+            id: e.id,
+            summary: e.summary,
+            start: e.start?.dateTime ?? e.start?.date,
+            end: e.end?.dateTime ?? e.end?.date,
+          },
+        ]
+      : [],
+  );
 }
